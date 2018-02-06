@@ -1,3 +1,11 @@
+{% from "./../helpers/svg.nunj" import svg %}
+
 <div class="search">
-    <input class="search__input" />
+    <h1 class="search__title">SEARCH</h1>
+    <form class="search__form">
+        <span>
+            {{ svg('search', 'search__icon') }}
+        </span>
+        <input class="search__input" />
+    </form>
 </div>
