@@ -34,6 +34,15 @@
         }
     }
 
+    &__result {
+        font-weight: 300;
+        margin-top: 50px;
+
+        &--name {
+            padding:5px;
+        }
+    }
+
     &__icon {
         @include size(20px);
         position: absolute;
