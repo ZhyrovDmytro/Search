@@ -1,0 +1,3 @@
+{% for products in data.items %}
+    <h1 class="search__result--name">{{ products.name }}</h1>
+{% endfor %}
