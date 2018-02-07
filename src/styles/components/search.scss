@@ -39,7 +39,11 @@
         margin-top: 50px;
 
         &--name {
-            padding:5px;
+            padding: 5px;
+        }
+
+        &--item {
+            color: red;
         }
     }
 

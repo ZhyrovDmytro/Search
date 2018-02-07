@@ -9,4 +9,5 @@
         <input class="search__input js-search-input" />
     </div>
     <div class="js-search-result search__result"></div>
+    <div class="js-search-result--description search__result"></div>
 </div>
