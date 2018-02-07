@@ -18,3 +18,10 @@ gulp.task('copySgAssets', () => {
 
     return merge(css, js, gfx);
 });
+
+gulp.task('copyJsTemplates', () => {
+    const jsTemplates = gulp.src(`${config.JS_TEMPLATES}/*`)
+        .pipe(gulp.dest(`${config.JS_TEMPLATES_BUILD}`));
+
+    return jsTemplates;
+});
