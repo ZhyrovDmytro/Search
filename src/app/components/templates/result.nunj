@@ -1,6 +1,6 @@
-{% for products in data.items %}
+{% for people in data.results %}
     <div class="search__result--item">
-        <h1 class="search__result--name">{{ products.name }}</h1>
-        <p>{{ products.description }}</p>
+        <h3 class="search__result--name">{{ people.name }}</h3>
+        <p>{{ people.description }}</p>
     </div>
 {% endfor %}

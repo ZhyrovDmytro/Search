@@ -17,49 +17,37 @@ export default class Search {
     requestService = (event) => {
         axios({
             method: 'get',
-            url: 'http://localhost:5003/products'
+            url: 'https://swapi.co/api/people/'
         })
             .then((response) => {
-                this.renderResults(response.data);
+                console.log(response.data.results);
+                this.findByName(response.data.results);
             })
             .catch((error) => {
                 console.error('Failed!');
             });
     }
 
-    renderResults = data => {
-        const items = data.items;
+    // renderResults = results => {
+    //     const myData = results.filter(selectData => {
+    //         this.findByName(selectData);
+
+    //         return selectData;
+    //     });
+    //     }
+
+    findByName = (results) => {
         let NAME;
-        let ITEM;
-        let DESCRIPTION;
-
-        items.forEach(item => {
-            const itenName = item.name;
-            const itenDescription = item.description;
-
-            DESCRIPTION = itenDescription;
-            NAME = itenName;
-
-            // ITEM = {
-            //     NAME,
-            //     DESCRIPTION
-            // };
-
-            this.findByName(DESCRIPTION, NAME);
+        const template = this.nunjEnv.getTemplate('result.nunj');
+        const insertTemplate = template.render({ results });
+        const myItem = results.forEach(item => {
+            NAME = item.name;
         });
 
-        if (this.searchInput.value === '') this.searchResult.innerHTML = '';
-    }
-
-    findByName = (DESCRIPTION, NAME) => {
-        // const template = this.nunjEnv.getTemplate('result.nunj');
-
-        // const insertTemplate = template.render({ ITEM });
-
-        if (this.searchInput.value === NAME) {
-            this.searchResult.innerHTML = NAME;
-            console.log(DESCRIPTION);
-            this.searchResultDesc.innerHTML = DESCRIPTION;
+        if (NAME.toUpperCase().indexOf(this.searchInput.value.toUpperCase()) > -1) {
+            this.searchResult.innerHTML = insertTemplate;
         }
+
+        if (this.searchInput.value === '') this.searchResult.innerHTML = '';
     }
 }
