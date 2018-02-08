@@ -35,10 +35,22 @@
     }
 
     &__result {
+        display: flex;
+        align-self: center;
+        width: 300px;
         font-weight: 300;
-        margin-top: 50px;
+        margin-top: 20px;
+
+        @include media-breakpoint-up(sm) {
+            width: 400px;
+        }
+
+        @include media-breakpoint-up(sm) {
+            width: 550px;
+        }
 
         &--name {
+            text-align: left;
             padding: 5px;
         }
     }
@@ -49,5 +61,9 @@
         top: calc(50% - 10px);
         margin-left: 10px;
         fill: rgb(131, 129, 129);
+    }
+
+    &__table {
+        width: 100%;
     }
 }
