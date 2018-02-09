@@ -5,11 +5,11 @@ import 'babel-polyfill';
  */
 import 'svgxuse';
 import init from './init';
-// import factory from './factory';
 import { render, renderFactory } from './render';
+import Search from './components/Search';
 
 const app = (config) => {
-
+    init(Search, document.querySelector('.js-search'));
 };
 
-app(window.config);
+app(null, window.config);

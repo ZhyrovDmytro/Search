@@ -67,6 +67,10 @@ const
     TEMPLATE_PAGES = `${TEMPLATE_BASE}/*.nunj`,
     TEMPLATE_ALL = `${TEMPLATE_BASE}/**/*.nunj`,
 
+    /* Nunjucks JS templates */
+    JS_TEMPLATES = `${JS_BASE}/components/templates`,
+    JS_TEMPLATES_BUILD = `${JS_BUILD}/templates`,
+
     /* HTML */
     HTML_ALL = `${DEVELOPMENT_BASE}/*.html`,
     HTML_BUILD = `${BUILD_BASE}/*.html`,
@@ -102,6 +106,9 @@ module.exports = {
     CSS_ALL,
     CSS_BUILD,
     CSS_TPL_PATH,
+
+    JS_TEMPLATES,
+    JS_TEMPLATES_BUILD,
 
     JS_BASE,
     JS_MAIN_FILENAME,
