@@ -1,7 +1,7 @@
 {% from "./../helpers/svg.nunj" import svg %}
 
 <div class="search js-search">
-    <h1 class="search__title">SEARCH</h1>
+    <h1 class="search__title">FIND YOUR <span class="search__random--hero js-random-hero">HERO</span></h1>
     <div class="search__form">
         <span>
             {{ svg('search', 'search__icon') }}
