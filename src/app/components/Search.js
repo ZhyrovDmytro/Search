@@ -15,36 +15,43 @@ export default class Search {
         this.searchInput.addEventListener('input', this.requestService);
     }
 
+    /**
+     * get request with data
+     */
     requestService = (event) => {
-        axios({
-            method: 'get',
-            url: 'https://swapi.co/api/people/'
-        })
-            .then((response) => {
-                this.findByName(response.data.results);
-            })
+        axios.all([
+            axios.get('https://swapi.co/api/people/'), // get people data
+            axios.get('https://swapi.co/api/people/?page=2') // get another people data
+        ])
+            .then(axios.spread((peopleListFirst, peopleListSecond) => {
+                const firstList = peopleListFirst.data.results; // path to information what we need
+                const secondList = peopleListSecond.data.results;// path to information what we need
+                const fullStack = firstList.concat(secondList); // merge two lists in one
+                this.renderResults(fullStack);
+            }))
             .catch((error) => {
-                console.error('Failed!');
+                console.error('Failed!'); // error if failed
             });
     }
 
-    findByName = (results) => {
-        let NAME;
+    // render template
+    renderResults = (results) => {
         const template = this.nunjEnv.getTemplate('result.nunj');
         const insertTemplate = template.render({ results });
+        let personName;
 
         const myItem = results.forEach(item => {
-            NAME = item.name;
+            personName = item.name;
         });
+
         this.searchResult.innerHTML = insertTemplate;
+        this.findPersonByName();
 
-        this.renderResults();
-
-        if (this.searchInput.value === '') this.searchResult.innerHTML = '';
+        if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
 
     }
 
-    renderResults = () => {
+    findPersonByName = () => {
         const table = this.container.querySelector('.js-search-table');
         const rows = this.container.querySelectorAll('.js-search-row');
         const item = this.container.querySelector('.js-search-item');
