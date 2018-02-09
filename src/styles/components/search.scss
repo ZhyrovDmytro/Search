@@ -15,6 +15,7 @@
     }
 
     &__input {
+        z-index: 10;
         width: 300px;
         padding: 10px 5px 10px 40px;
         border: 1px solid rgb(194, 194, 194);
@@ -39,7 +40,6 @@
         align-self: center;
         width: 300px;
         font-weight: 300;
-        margin-top: 20px;
 
         @include media-breakpoint-up(sm) {
             width: 400px;
@@ -50,8 +50,8 @@
         }
 
         &--name {
+            padding: 15px 5px;
             text-align: left;
-            padding: 5px;
         }
     }
 
@@ -65,5 +65,17 @@
 
     &__table {
         width: 100%;
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .2);
+    }
+
+    &__item {
+        z-index: 100;
+        padding: 5px;
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    &__row {
+        border: 2px solid #eee;
     }
 }

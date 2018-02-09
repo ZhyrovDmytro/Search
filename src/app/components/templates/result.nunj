@@ -1,9 +1,9 @@
 <table class="js-search-table search__table">
     {% for people in results %}
-        <tr class="js-search-row">
-            <td class="js-search-item"><h3 class="search__result--name js-search-name name">{{ people.name }}</h3></td>
-            <td class="js-search-item"><p>height: <strong>{{ people.height }}</strong></p></td>
-            <td class="js-search-item"><p>gender: <strong>{{ people.gender }}</strong></p></td>
+        <tr class="js-search-row search__row">
+            <td class="js-search-item"><h4 class="search__result--name js-search-name name">{{ people.name }}</h4></td>
+            <td class="js-search-item search__item"><p>height: <strong>{{ people.height }}</strong></p></td>
+            <td class="js-search-item search__item"><p>gender: <strong>{{ people.gender }}</strong></p></td>
         </tr>
     {% endfor %}
 </table>
