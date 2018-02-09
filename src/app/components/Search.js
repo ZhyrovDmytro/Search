@@ -1,5 +1,6 @@
 import nunjucks from 'nunjucks';
 import axios from 'axios';
+import { API, template, state } from './../constants';
 
 export default class Search {
     constructor(container) {
@@ -7,26 +8,26 @@ export default class Search {
         this.searchInput = this.container.querySelector('.js-search-input');
         this.searchResult = this.container.querySelector('.js-search-result');
         this.searchResultDesc = this.container.querySelector('.js-search-result--description');
+        this.personRandom = this.container.querySelector('.js-random-hero');
 
+        this.nunjEnv = nunjucks.configure(template.templatePath);
 
-        const jsTemplate = 'http://localhost:5001/js/templates';
-        this.nunjEnv = nunjucks.configure(jsTemplate);
-
+        // if (this.personRandom) this.personRandom.addEventListener('click', this.requestService); // doesnt work fine
         this.searchInput.addEventListener('input', this.requestService);
     }
 
     /**
      * get request with data
      */
-    requestService = (event) => {
+    requestService = () => {
         axios.all([
-            axios.get('https://swapi.co/api/people/'), // get people data
-            axios.get('https://swapi.co/api/people/?page=2') // get another people data
+            axios.get(API.peopleFirstList), // get people data
+            axios.get(API.peopleSecondtList) // get another people data
         ])
             .then(axios.spread((peopleListFirst, peopleListSecond) => {
                 const firstList = peopleListFirst.data.results; // path to information what we need
                 const secondList = peopleListSecond.data.results;// path to information what we need
-                const fullStack = firstList.concat(secondList); // merge two lists in one
+                const fullStack = [...firstList, ...secondList]; // merge two lists in one
                 this.renderResults(fullStack);
             }))
             .catch((error) => {
@@ -38,35 +39,48 @@ export default class Search {
     renderResults = (results) => {
         const template = this.nunjEnv.getTemplate('result.nunj');
         const insertTemplate = template.render({ results });
-        let personName;
-
-        const myItem = results.forEach(item => {
-            personName = item.name;
-        });
 
         this.searchResult.innerHTML = insertTemplate;
+
+        // this.findPersonRandom(); // doesnt work fine
         this.findPersonByName();
-
-        if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
-
     }
 
+    // searching person by name
     findPersonByName = () => {
         const table = this.container.querySelector('.js-search-table');
         const rows = this.container.querySelectorAll('.js-search-row');
         const item = this.container.querySelector('.js-search-item');
         const itemName = this.container.querySelectorAll('.js-search-name');
 
-        for (let i = 0; i < rows.length; i += 1) {
-            const itemName = rows[i].querySelectorAll('.js-search-item')[0];
+        rows.forEach(row => {
+            const itemName = row.querySelectorAll('.js-search-item')[0];
             const findName = itemName.querySelector('.js-search-name');
+            const findNameValue = findName.innerHTML.toUpperCase();
+            const searchInputValue = this.searchInput.value.toUpperCase();
+            const searchMatched = findNameValue.indexOf(searchInputValue) > -1;
+
             if (itemName) {
-                if (findName.innerHTML.toUpperCase().indexOf(this.searchInput.value.toUpperCase()) > -1) {
-                    rows[i].style.display = '';
+                if (searchMatched) {
+                    itemName;
                 } else {
-                    rows[i].style.display = 'none';
+                    row.classList.add(state.disable);
                 }
             }
-        }
+            if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
+        });
     }
+
+    // Doesnt works fine.
+
+    // findPersonRandom = () => {
+    //     const rows = this.container.querySelectorAll('.js-search-row');
+    //     const randome = rows[Math.floor(Math.random() * rows.length)];
+
+    //     rows.forEach(row => {
+    //         row.classList.add(state.disable);
+    //     });
+
+    //     randome.classList.add('active');
+    // }
 }
