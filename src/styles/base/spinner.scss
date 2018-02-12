@@ -1,0 +1,25 @@
+.spinner {
+    @include size(30px);
+    position: absolute;
+    top: calc(50% - 15px);
+    left: calc(50% - 15px);
+    display: none;
+    border: 2px inset  rgb(255, 255, 255);
+    border-radius: 35px;
+    transform: translateZ(0);
+    animation: rotate 1000ms infinite linear;
+
+    &.active {
+        display: block;
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

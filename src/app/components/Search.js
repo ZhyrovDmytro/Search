@@ -1,86 +1,105 @@
 import nunjucks from 'nunjucks';
 import axios from 'axios';
-import { API, template, state } from './../constants';
+import { API, template, state, nunjucksOption } from './../constants';
 
 export default class Search {
     constructor(container) {
         this.container = container;
         this.searchInput = this.container.querySelector('.js-search-input');
         this.searchResult = this.container.querySelector('.js-search-result');
-        this.searchResultDesc = this.container.querySelector('.js-search-result--description');
-        this.personRandom = this.container.querySelector('.js-random-hero');
+        this.personRandomButton = this.container.querySelector('.js-random-hero');
+        this.loader = this.container.querySelector('.spinner');
 
-        this.nunjEnv = nunjucks.configure(template.templatePath);
+        this.nunjEnv = nunjucks.configure(template.templatePath, nunjucksOption.web);
 
-        // if (this.personRandom) this.personRandom.addEventListener('click', this.requestService); // doesnt work fine
+        this.personRandomButton.addEventListener('click', this.findPersonRandom);
         this.searchInput.addEventListener('input', this.requestService);
     }
 
     /**
-     * get request with data
+     * get request with data from the server
      */
     requestService = () => {
+        this.searchValue = this.searchInput.value;
+        this.setDataSpin();
+
         axios.all([
-            axios.get(API.peopleFirstList), // get people data
-            axios.get(API.peopleSecondtList) // get another people data
+            axios.get(API.peopleListPath + this.searchValue) // get people data
         ])
             .then(axios.spread((peopleListFirst, peopleListSecond) => {
                 const firstList = peopleListFirst.data.results; // path to information what we need
-                const secondList = peopleListSecond.data.results;// path to information what we need
-                const fullStack = [...firstList, ...secondList]; // merge two lists in one
-                this.renderResults(fullStack);
+                this.renderResults(firstList);
             }))
             .catch((error) => {
-                console.error('Failed!'); // error if failed
+                console.warn('Failed!'); // error if failed
             });
     }
 
-    // render template
+    /**
+     * description: render template
+     * @param {Object} results - data from server
+     */
     renderResults = (results) => {
         const template = this.nunjEnv.getTemplate('result.nunj');
-        const insertTemplate = template.render({ results });
+        const insertTemplate = template.render({ results }); // rendering nunjucks template
 
         this.searchResult.innerHTML = insertTemplate;
 
-        // this.findPersonRandom(); // doesnt work fine
+        this.resetDataSpin();
         this.findPersonByName();
     }
 
-    // searching person by name
+    /**
+     * description: Searching person in list
+     */
     findPersonByName = () => {
-        const table = this.container.querySelector('.js-search-table');
         const rows = this.container.querySelectorAll('.js-search-row');
-        const item = this.container.querySelector('.js-search-item');
-        const itemName = this.container.querySelectorAll('.js-search-name');
 
         rows.forEach(row => {
-            const itemName = row.querySelectorAll('.js-search-item')[0];
-            const findName = itemName.querySelector('.js-search-name');
-            const findNameValue = findName.innerHTML.toUpperCase();
+            const findNameValue = row.textContent.toUpperCase();
             const searchInputValue = this.searchInput.value.toUpperCase();
-            const searchMatched = findNameValue.indexOf(searchInputValue) > -1;
+            const searchMatched = findNameValue.includex(searchInputValue);
 
-            if (itemName) {
+            if (findNameValue) {
                 if (searchMatched) {
-                    itemName;
+                    findNameValue;
                 } else {
                     row.classList.add(state.disable);
                 }
             }
+        });
+
+        this.searchInput.addEventListener('focusout', () => {
             if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
         });
     }
 
-    // Doesnt works fine.
+    /**
+     * description: Searching Random person in list
+     */
+    findPersonRandom = () => {
+        const rows = [...this.container.querySelectorAll('.js-search-row')];
+        const random = rows[Math.floor(Math.random() * rows.length)];
 
-    // findPersonRandom = () => {
-    //     const rows = this.container.querySelectorAll('.js-search-row');
-    //     const randome = rows[Math.floor(Math.random() * rows.length)];
+        if (random === undefined) {
+            this.requestService();
+        } else {
+            for (let i = 0; i < rows.length; i += 1) {
+                rows[i].classList.add(state.disable);
+                if (rows[i].classList.contains(state.active)) rows[i].classList.remove(state.active);
+            }
+        }
 
-    //     rows.forEach(row => {
-    //         row.classList.add(state.disable);
-    //     });
+        random.classList.add(state.active);
+    }
 
-    //     randome.classList.add('active');
-    // }
+    // add load spinner
+    setDataSpin = () => {
+        this.loader.classList.add(state.active);
+    }
+
+    // delete load spinner
+    resetDataSpin = () => {
+        this.loader.classList.remove(state.active);
+    }
 }
