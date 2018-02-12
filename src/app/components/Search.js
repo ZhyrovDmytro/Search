@@ -7,9 +7,8 @@ export default class Search {
         this.container = container;
         this.searchInput = this.container.querySelector('.js-search-input');
         this.searchResult = this.container.querySelector('.js-search-result');
-        this.searchResultDesc = this.container.querySelector('.js-search-result--description');
         this.personRandomButton = this.container.querySelector('.js-random-hero');
-        this.dataspinner = this.container.querySelector('.spinner');
+        this.loader = this.container.querySelector('.spinner');
 
         this.nunjEnv = nunjucks.configure(template.templatePath, nunjucksOption.web);
 
@@ -18,47 +17,48 @@ export default class Search {
     }
 
     /**
-     * get request with data
+     * get request with data from the server
      */
     requestService = () => {
+        this.searchValue = this.searchInput.value;
         this.setDataSpin();
 
         axios.all([
-            axios.get(API.peopleFirstList), // get people data
-            axios.get(API.peopleSecondtList) // get another people data
+            axios.get(API.peopleListPath + this.searchValue) // get people data
         ])
             .then(axios.spread((peopleListFirst, peopleListSecond) => {
                 const firstList = peopleListFirst.data.results; // path to information what we need
-                const secondList = peopleListSecond.data.results;// path to information what we need
-                const fullStack = [...firstList, ...secondList]; // merge two lists in one
-                this.renderResults(fullStack);
+                this.renderResults(firstList);
             }))
             .catch((error) => {
-                console.error('Failed!'); // error if failed
+                console.warn('Failed!'); // error if failed
             });
     }
 
-    // render template
+    /**
+     * description: render template
+     * @param {Object} results - data from server
+     */
     renderResults = (results) => {
         const template = this.nunjEnv.getTemplate('result.nunj');
-        const insertTemplate = template.render({ results });
+        const insertTemplate = template.render({ results }); // rendering nunjucks template
 
         this.searchResult.innerHTML = insertTemplate;
-
-        if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
 
         this.resetDataSpin();
         this.findPersonByName();
     }
 
-    // searching person by name
+    /**
+     * description: Searching person in list
+     */
     findPersonByName = () => {
         const rows = this.container.querySelectorAll('.js-search-row');
 
         rows.forEach(row => {
             const findNameValue = row.textContent.toUpperCase();
             const searchInputValue = this.searchInput.value.toUpperCase();
-            const searchMatched = findNameValue.indexOf(searchInputValue) > -1;
+            const searchMatched = findNameValue.includex(searchInputValue);
 
             if (findNameValue) {
                 if (searchMatched) {
@@ -68,28 +68,38 @@ export default class Search {
                 }
             }
         });
+
+        this.searchInput.addEventListener('focusout', () => {
+            if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
+        });
     }
 
-    // Doesnt works fine.
-
+    /**
+     * description: Searching Random person in list
+     */
     findPersonRandom = () => {
-        const rows = this.container.querySelectorAll('.js-search-row');
-        const randome = rows[Math.floor(Math.random() * rows.length)];
+        const rows = [...this.container.querySelectorAll('.js-search-row')];
+        const random = rows[Math.floor(Math.random() * rows.length)];
 
-        rows.forEach(row => {
-            row.classList.add(state.disable);
-            if (row.classList.contains(state.active)) row.classList.remove(state.active);
-            randome.classList.add(state.active);
-        });
+        if (random === undefined) {
+            this.requestService();
+        } else {
+            for (let i = 0; i < rows.length; i += 1) {
+                rows[i].classList.add(state.disable);
+                if (rows[i].classList.contains(state.active)) rows[i].classList.remove(state.active);
+            }
+        }
+
+        random.classList.add(state.active);
     }
 
     // add load spinner
     setDataSpin = () => {
-        this.dataspinner.classList.add(state.active);
+        this.loader.classList.add(state.active);
     }
 
     // delete load spinner
     resetDataSpin = () => {
-        this.dataspinner.classList.remove(state.active);
+        this.loader.classList.remove(state.active);
     }
 }

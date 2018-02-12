@@ -53,6 +53,14 @@
             padding: 15px 5px;
             text-align: left;
         }
+
+        &.disabled {
+            display: none;
+        }
+
+        &.active {
+            display: block;
+        }
     }
 
     &__icon {

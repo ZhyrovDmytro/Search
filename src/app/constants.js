@@ -1,6 +1,5 @@
 export const API = {
-    peopleFirstList: 'https://swapi.co/api/people/',
-    peopleSecondtList: 'https://swapi.co/api/people/?page=2'
+    peopleListPath: 'https://swapi.co/api/people/?search='
 };
 
 export const template = {
