@@ -8,11 +8,12 @@ export default class Search {
         this.searchInput = this.container.querySelector('.js-search-input');
         this.searchResult = this.container.querySelector('.js-search-result');
         this.searchResultDesc = this.container.querySelector('.js-search-result--description');
-        this.personRandom = this.container.querySelector('.js-random-hero');
+        this.personRandomButton = this.container.querySelector('.js-random-hero');
+        this.dataspinner = this.container.querySelector('.spinner');
 
         this.nunjEnv = nunjucks.configure(template.templatePath, nunjucksOption.web);
 
-        // this.personRandom.addEventListener('click', this.requestService); // doesnt work fine
+        this.personRandomButton.addEventListener('click', this.findPersonRandom);
         this.searchInput.addEventListener('input', this.requestService);
     }
 
@@ -20,6 +21,8 @@ export default class Search {
      * get request with data
      */
     requestService = () => {
+        this.setDataSpin();
+
         axios.all([
             axios.get(API.peopleFirstList), // get people data
             axios.get(API.peopleSecondtList) // get another people data
@@ -42,7 +45,9 @@ export default class Search {
 
         this.searchResult.innerHTML = insertTemplate;
 
-        // this.findPersonRandom(); // doesnt work fine
+        if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
+
+        this.resetDataSpin();
         this.findPersonByName();
     }
 
@@ -63,19 +68,28 @@ export default class Search {
                 }
             }
         });
-        if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
     }
 
     // Doesnt works fine.
 
-    // findPersonRandom = () => {
-    //     const rows = this.container.querySelectorAll('.js-search-row');
-    //     const randome = rows[Math.floor(Math.random() * rows.length)];
+    findPersonRandom = () => {
+        const rows = this.container.querySelectorAll('.js-search-row');
+        const randome = rows[Math.floor(Math.random() * rows.length)];
 
-    //     rows.forEach(row => {
-    //         row.classList.add(state.disable);
-    //     });
+        rows.forEach(row => {
+            row.classList.add(state.disable);
+            if (row.classList.contains(state.active)) row.classList.remove(state.active);
+            randome.classList.add(state.active);
+        });
+    }
 
-    //     randome.classList.add('active');
-    // }
+    // add load spinner
+    setDataSpin = () => {
+        this.dataspinner.classList.add(state.active);
+    }
+
+    // delete load spinner
+    resetDataSpin = () => {
+        this.dataspinner.classList.remove(state.active);
+    }
 }

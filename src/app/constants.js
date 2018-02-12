@@ -8,7 +8,8 @@ export const template = {
 };
 
 export const state = {
-    disable: 'disabled'
+    disable: 'disabled',
+    active: 'active'
 };
 
 export const nunjucksOption = {
