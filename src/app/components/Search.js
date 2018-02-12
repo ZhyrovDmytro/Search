@@ -1,6 +1,6 @@
 import nunjucks from 'nunjucks';
 import axios from 'axios';
-import { API, template, state } from './../constants';
+import { API, template, state, nunjucksOption } from './../constants';
 
 export default class Search {
     constructor(container) {
@@ -10,9 +10,9 @@ export default class Search {
         this.searchResultDesc = this.container.querySelector('.js-search-result--description');
         this.personRandom = this.container.querySelector('.js-random-hero');
 
-        this.nunjEnv = nunjucks.configure(template.templatePath);
+        this.nunjEnv = nunjucks.configure(template.templatePath, nunjucksOption.web);
 
-        // if (this.personRandom) this.personRandom.addEventListener('click', this.requestService); // doesnt work fine
+        // this.personRandom.addEventListener('click', this.requestService); // doesnt work fine
         this.searchInput.addEventListener('input', this.requestService);
     }
 
@@ -48,27 +48,22 @@ export default class Search {
 
     // searching person by name
     findPersonByName = () => {
-        const table = this.container.querySelector('.js-search-table');
         const rows = this.container.querySelectorAll('.js-search-row');
-        const item = this.container.querySelector('.js-search-item');
-        const itemName = this.container.querySelectorAll('.js-search-name');
 
         rows.forEach(row => {
-            const itemName = row.querySelectorAll('.js-search-item')[0];
-            const findName = itemName.querySelector('.js-search-name');
-            const findNameValue = findName.innerHTML.toUpperCase();
+            const findNameValue = row.textContent.toUpperCase();
             const searchInputValue = this.searchInput.value.toUpperCase();
             const searchMatched = findNameValue.indexOf(searchInputValue) > -1;
 
-            if (itemName) {
+            if (findNameValue) {
                 if (searchMatched) {
-                    itemName;
+                    findNameValue;
                 } else {
                     row.classList.add(state.disable);
                 }
             }
-            if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
         });
+        if (this.searchInput.value === '') this.searchResult.innerHTML = ''; // delete search result when input is empty
     }
 
     // Doesnt works fine.

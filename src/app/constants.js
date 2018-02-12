@@ -10,3 +10,7 @@ export const template = {
 export const state = {
     disable: 'disabled'
 };
+
+export const nunjucksOption = {
+    web: { useCache: true }
+};

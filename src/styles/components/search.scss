@@ -90,11 +90,9 @@
     &__random {
         &--hero {
             display: inline-block;
-            color: rgb(255, 0, 0);
 
             &:hover {
                 cursor: pointer;
-                transform: scale(1.05);
             }
 
             &:active {
